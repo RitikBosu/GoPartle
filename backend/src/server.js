@@ -32,22 +32,23 @@ async function connectDB() {
   }
 }
 
-// Ensure DB is connected on every request (reused in serverless)
+// Ensure DB is connected on every request
 app.use(async (req, res, next) => {
   await connectDB();
   next();
 });
 
-// ── Routes ───────────────────────────────────────────────────────────────────
-app.get("/", (req, res) => {
+// ── Root Health Check (Matches /, /api, /api/index) ──────────────────────────
+app.get(["/", "/api", "/api/index", "/api/index.js"], (req, res) => {
   res.json({ status: "ok", message: "GoPratle API is running 🎉" });
 });
 
-app.use("/api/requirements", requirementsRouter);
+// ── Requirements Router (Matches both /api/requirements and /requirements) ───
+app.use(["/api/requirements", "/requirements"], requirementsRouter);
 
 // ── 404 handler ──────────────────────────────────────────────────────────────
 app.use((req, res) => {
-  res.status(404).json({ success: false, message: "Route not found" });
+  res.status(404).json({ success: false, message: `Route not found: ${req.originalUrl}` });
 });
 
 // ── Global error handler ─────────────────────────────────────────────────────

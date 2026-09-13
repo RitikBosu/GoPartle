@@ -8,15 +8,18 @@ const requirementsRouter = require("./routes/requirements");
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// ── Middleware ───────────────────────────────────────────────────────────────
-app.use(
-  cors({
-    origin: "*",
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-  })
-);
-app.options("*", cors());
+// ── Global CORS Middleware (Applies to all requests & responses) ──────────────
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  if (req.method === "OPTIONS") {
+    return res.status(200).end();
+  }
+  next();
+});
+
+app.use(cors({ origin: "*" }));
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
 
@@ -24,27 +27,36 @@ app.use(express.urlencoded({ extended: true }));
 let isConnected = false;
 async function connectDB() {
   if (isConnected && mongoose.connection.readyState === 1) return;
-  try {
-    const db = await mongoose.connect(process.env.MONGODB_URI);
-    isConnected = db.connections[0].readyState === 1;
-    console.log("✅ Connected to MongoDB Atlas");
-  } catch (err) {
-    console.error("❌ MongoDB connection error:", err.message);
+  const uri = process.env.MONGODB_URI;
+  if (!uri) {
+    throw new Error("MONGODB_URI is not defined in environment variables!");
   }
+  const db = await mongoose.connect(uri);
+  isConnected = db.connections[0].readyState === 1;
+  console.log("✅ Connected to MongoDB Atlas");
 }
 
-// Ensure DB is connected on every request
+// DB Connection middleware with error catching
 app.use(async (req, res, next) => {
-  await connectDB();
-  next();
+  try {
+    await connectDB();
+    next();
+  } catch (err) {
+    console.error("❌ DB Connection Error:", err.message);
+    res.status(500).json({
+      success: false,
+      message: "Database connection failed. Please check MONGODB_URI in Vercel environment variables.",
+      error: err.message,
+    });
+  }
 });
 
-// ── Root Health Check (Matches /, /api, /api/index) ──────────────────────────
+// ── Root Health Check ────────────────────────────────────────────────────────
 app.get(["/", "/api", "/api/index", "/api/index.js"], (req, res) => {
   res.json({ status: "ok", message: "GoPratle API is running 🎉" });
 });
 
-// ── Requirements Router (Matches both /api/requirements and /requirements) ───
+// ── Requirements Router ──────────────────────────────────────────────────────
 app.use(["/api/requirements", "/requirements"], requirementsRouter);
 
 // ── 404 handler ──────────────────────────────────────────────────────────────
@@ -55,7 +67,7 @@ app.use((req, res) => {
 // ── Global error handler ─────────────────────────────────────────────────────
 app.use((err, req, res, next) => {
   console.error("Unhandled error:", err.stack);
-  res.status(500).json({ success: false, message: "Internal server error" });
+  res.status(500).json({ success: false, message: "Internal server error", error: err.message });
 });
 
 // ── Local Dev Server Listen ───────────────────────────────────────────────────

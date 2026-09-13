@@ -1,4 +1,8 @@
-const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+let rawUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+if (!rawUrl.startsWith("http://") && !rawUrl.startsWith("https://")) {
+  rawUrl = `https://${rawUrl}`;
+}
+const BACKEND_URL = rawUrl.replace(/\/+$/, "");
 
 export interface RequirementPayload {
   // Step 1
@@ -53,5 +57,8 @@ export async function getRequirements(category?: string) {
     ? `${BACKEND_URL}/api/requirements?category=${category}`
     : `${BACKEND_URL}/api/requirements`;
   const res = await fetch(url);
+  if (!res.ok) {
+    throw new Error(`API Error ${res.status}: Unable to fetch events`);
+  }
   return res.json();
 }

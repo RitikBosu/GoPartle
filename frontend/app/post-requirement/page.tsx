@@ -112,8 +112,6 @@ export default function PostRequirementPage() {
     setSubmitError("");
   };
 
-  const CATEGORY_ICONS: Record<string, string> = { planner: "📋", performer: "🎤", crew: "🎬" };
-
   return (
     <main className="page-wrapper">
       <Navbar />
@@ -123,28 +121,31 @@ export default function PostRequirementPage() {
         {submitted ? (
           <div className="card">
             <div className="success-screen">
-              <div className="success-icon">🎉</div>
-              <h2 className="success-title">You&apos;re all set!</h2>
+              <div className="success-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+              </div>
+              <h2 className="success-title">Requirement Posted</h2>
               <p className="success-subtitle">
-                Your requirement has been posted and categorised as{" "}
-                <span className={`category-badge ${step1.category}`}>
-                  {CATEGORY_ICONS[step1.category]} {step1.category}
+                Your requirement has been saved and categorized under{" "}
+                <span className="category-badge">
+                  {step1.category}
                 </span>.
-                {" "}Saved directly to MongoDB Atlas!
               </p>
               <div className="success-id">#{submittedId.slice(-8).toUpperCase()}</div>
-              
-              <div style={{ display: "flex", gap: "10px", marginTop: "8px", flexWrap: "wrap", justifyContent: "center" }}>
+
+              <div style={{ display: "flex", gap: "10px", marginTop: "12px", flexWrap: "wrap", justifyContent: "center" }}>
                 <button
                   id="post-another"
                   className="btn btn-secondary"
                   onClick={handleReset}
                 >
-                  + Post Another
+                  Post Another
                 </button>
 
                 <Link href="/events" className="btn btn-primary" style={{ textDecoration: "none" }}>
-                  📊 Explore All Events
+                  Explore All Events
                 </Link>
               </div>
             </div>

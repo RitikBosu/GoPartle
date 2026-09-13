@@ -17,7 +17,6 @@ interface Props {
   submitError: string;
 }
 
-// Parse a YYYY-MM-DD string as local date (not UTC) to avoid timezone shift
 function fmtDate(d: string): string {
   if (!d) return "—";
   const [year, month, day] = d.split("-").map(Number);
@@ -34,11 +33,6 @@ function fmtCurrency(val: number): string {
   return val ? `₹${val.toLocaleString("en-IN")}` : "—";
 }
 
-
-const CATEGORY_ICONS: Record<string, string> = {
-  planner: "📋", performer: "🎤", crew: "🎬",
-};
-
 export default function Step3Review({
   step1, planner, performer, crew,
   onBack, onSubmit, isSubmitting, submitError,
@@ -48,14 +42,14 @@ export default function Step3Review({
   return (
     <div>
       <CardHeader
-        stepLabel="Step 3 of 4 — Review"
-        title="Review Your Requirement"
-        subtitle="Check everything before submitting. You can go back to make changes."
+        stepLabel="Step 3 of 3 — Review"
+        title="Review Requirement"
+        subtitle="Verify all information before submitting to database."
       />
 
-      {/* ── Event Basics ─────────────────────────────────────── */}
-      <div className="review-section">
-        <div className="review-section-title">🗓 Event Details</div>
+      {/* Event Basics */}
+      <div className="review-section" style={{ marginBottom: "20px" }}>
+        <div className="review-section-title">Event Details</div>
         <div className="review-grid">
           <ReviewItem label="Event Name"  value={step1.eventName} />
           <ReviewItem label="Event Type"  value={step1.eventType} />
@@ -64,17 +58,17 @@ export default function Step3Review({
           <ReviewItem label="Location"    value={step1.location} />
           <ReviewItem label="Venue"       value={step1.venue || "—"} />
           <ReviewItem label="Category" span="full">
-            <span className={`category-badge ${cat}`}>
-              {CATEGORY_ICONS[cat]} {cat}
+            <span className="category-badge">
+              {cat}
             </span>
           </ReviewItem>
         </div>
       </div>
 
-      {/* ── Planner Details ───────────────────────────────────── */}
+      {/* Planner Details */}
       {cat === "planner" && (
         <div className="review-section">
-          <div className="review-section-title">📋 Planner Details</div>
+          <div className="review-section-title">Planner Requirements</div>
           <div className="review-grid">
             <ReviewItem label="Services Needed" value={fmtArray(planner.servicesNeeded)} span="full" />
             <ReviewItem
@@ -94,10 +88,10 @@ export default function Step3Review({
         </div>
       )}
 
-      {/* ── Performer Details ─────────────────────────────────── */}
+      {/* Performer Details */}
       {cat === "performer" && (
         <div className="review-section">
-          <div className="review-section-title">🎤 Performer Details</div>
+          <div className="review-section-title">Performer Requirements</div>
           <div className="review-grid">
             <ReviewItem label="Performer Type"  value={performer.performerType || "—"} />
             <ReviewItem label="Set Duration"    value={performer.setDurationMinutes ? `${performer.setDurationMinutes} min` : "—"} />
@@ -111,10 +105,10 @@ export default function Step3Review({
         </div>
       )}
 
-      {/* ── Crew Details ──────────────────────────────────────── */}
+      {/* Crew Details */}
       {cat === "crew" && (
         <div className="review-section">
-          <div className="review-section-title">🎬 Crew Details</div>
+          <div className="review-section-title">Crew Requirements</div>
           <div className="review-grid">
             <ReviewItem label="Crew Types"         value={fmtArray(crew.crewTypesNeeded)} span="full" />
             <ReviewItem label="Number of Members"  value={crew.numberOfCrewMembers || "—"} />
@@ -130,14 +124,14 @@ export default function Step3Review({
       {/* Error banner */}
       {submitError && (
         <div className="validation-banner" role="alert">
-          ⚠ {submitError}
+          {submitError}
         </div>
       )}
 
       <StepNav
         backId="review-back"
         nextId="review-submit"
-        nextLabel="🚀 Post Requirement"
+        nextLabel="Submit Requirement"
         variant="submit"
         onBack={onBack}
         onNext={onSubmit}

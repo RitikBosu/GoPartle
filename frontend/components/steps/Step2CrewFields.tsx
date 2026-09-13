@@ -42,9 +42,9 @@ export default function Step2CrewFields({ data, onChange, onNext, onBack }: Prop
   return (
     <div>
       <CardHeader
-        stepLabel="Step 2 of 4 — Crew"
+        stepLabel="Step 2 of 3 — Crew"
         title="Crew Requirements"
-        subtitle="Specify the crew types, count, and budget for your event."
+        subtitle="Specify crew roles, count, hours, and budget per person."
       />
 
       <div className="form-grid">
@@ -64,7 +64,7 @@ export default function Step2CrewFields({ data, onChange, onNext, onBack }: Prop
           <input
             id="crewCount"
             type="number"
-            className="form-input"
+            className="input"
             placeholder="e.g. 10"
             min={1}
             value={data.numberOfCrewMembers || ""}
@@ -77,7 +77,7 @@ export default function Step2CrewFields({ data, onChange, onNext, onBack }: Prop
           <input
             id="hoursRequired"
             type="number"
-            className="form-input"
+            className="input"
             placeholder="e.g. 8"
             min={1}
             value={data.hoursRequired || ""}
@@ -90,7 +90,7 @@ export default function Step2CrewFields({ data, onChange, onNext, onBack }: Prop
           <input
             id="crewBudget"
             type="number"
-            className="form-input"
+            className="input"
             placeholder="e.g. 2500"
             min={0}
             value={data.budgetPerPerson || ""}
@@ -102,8 +102,9 @@ export default function Step2CrewFields({ data, onChange, onNext, onBack }: Prop
         <FormField id="specialSkills" label="Special Skills / Requirements" span="full">
           <textarea
             id="specialSkills"
-            className="form-textarea"
+            className="textarea"
             placeholder="First-aid certified, bilingual, prior concert experience…"
+            rows={3}
             value={data.specialSkills}
             onChange={(e) => set("specialSkills", e.target.value)}
           />
@@ -113,7 +114,7 @@ export default function Step2CrewFields({ data, onChange, onNext, onBack }: Prop
       <StepNav
         backId="crew-back"
         nextId="crew-next"
-        nextLabel="Review →"
+        nextLabel="Continue"
         onBack={onBack}
         onNext={() => { if (validate()) onNext(); }}
       />

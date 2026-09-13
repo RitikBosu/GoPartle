@@ -22,19 +22,19 @@ export default function Navbar() {
           href="/post-requirement"
           className={`nav-link ${pathname === "/post-requirement" ? "active" : ""}`}
         >
-          <span>✍️</span> Post Requirement
+          Post Requirement
         </Link>
         <Link
           href="/events"
           className={`nav-link ${pathname === "/events" ? "active" : ""}`}
         >
-          <span>📊</span> Explore Events
+          Explore Events
         </Link>
       </div>
 
       <div className="db-status-badge">
         <span className="db-pulse" />
-        MongoDB Atlas Connected
+        MongoDB Connected
       </div>
     </header>
   );

@@ -43,9 +43,9 @@ export default function Step2PerformerFields({ data, onChange, onNext, onBack }:
   return (
     <div>
       <CardHeader
-        stepLabel="Step 2 of 4 — Performer"
+        stepLabel="Step 2 of 3 — Performer"
         title="Performer Requirements"
-        subtitle="Describe the talent you're looking for."
+        subtitle="Specify talent role, set duration, and budget."
       />
 
       <div className="form-grid">
@@ -66,7 +66,7 @@ export default function Step2PerformerFields({ data, onChange, onNext, onBack }:
           <input
             id="setDuration"
             type="number"
-            className="form-input"
+            className="input"
             placeholder="e.g. 90"
             min={1}
             value={data.setDurationMinutes || ""}
@@ -88,7 +88,7 @@ export default function Step2PerformerFields({ data, onChange, onNext, onBack }:
           <input
             id="performerBudget"
             type="number"
-            className="form-input"
+            className="input"
             placeholder="e.g. 75000"
             min={0}
             value={data.budget || ""}
@@ -109,8 +109,9 @@ export default function Step2PerformerFields({ data, onChange, onNext, onBack }:
         <FormField id="performanceDetails" label="Performance Details" span="full">
           <textarea
             id="performanceDetails"
-            className="form-textarea"
+            className="textarea"
             placeholder="Stage setup preferences, song requests, special requirements…"
+            rows={3}
             value={data.performanceDetails}
             onChange={(e) => set("performanceDetails", e.target.value)}
           />
@@ -120,7 +121,7 @@ export default function Step2PerformerFields({ data, onChange, onNext, onBack }:
       <StepNav
         backId="performer-back"
         nextId="performer-next"
-        nextLabel="Review →"
+        nextLabel="Continue"
         onBack={onBack}
         onNext={() => { if (validate()) onNext(); }}
       />

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { CardHeader, ChipSelect, FormField, FormSelect, StepNav } from "@/components/ui";
+import { CardHeader, FormField, FormSelect, StepNav } from "@/components/ui";
 
 const EVENT_TYPES = [
   "Wedding", "Corporate Event", "Concert", "Festival", "Birthday Party",
@@ -9,9 +9,9 @@ const EVENT_TYPES = [
 ];
 
 const CATEGORIES = [
-  { value: "planner",  icon: "📋", title: "Event Planner", desc: "Décor, catering, coordination & more" },
-  { value: "performer",icon: "🎤", title: "Performer",      desc: "DJ, band, singer, dancer & more" },
-  { value: "crew",     icon: "🎬", title: "Crew",           desc: "Stage, lighting, sound, security & more" },
+  { value: "planner",   title: "Event Planner", desc: "Décor, catering, coordination & services" },
+  { value: "performer", title: "Performer",      desc: "DJ, band, singer, dancer & live acts" },
+  { value: "crew",      title: "Crew",           desc: "Stage, lighting, sound & security crew" },
 ];
 
 export interface Step1Data {
@@ -31,7 +31,7 @@ interface Props {
 }
 
 export default function Step1Basics({ data, onChange, onNext }: Props) {
-  const [errors, setErrors] = useState<Partial<Record<keyof Step1Data, string>>>({});
+  const [errors, setErrors] = useState<Partial<Record<keyof Step1Data, string>>>();
 
   const set = (field: keyof Step1Data, value: string) =>
     onChange({ ...data, [field]: value });
@@ -50,17 +50,17 @@ export default function Step1Basics({ data, onChange, onNext }: Props) {
   return (
     <div>
       <CardHeader
-        stepLabel="Step 1 of 4"
+        stepLabel="Step 1 of 3"
         title="Event Basics"
-        subtitle="Tell us about your event and what kind of help you need."
+        subtitle="Specify core details and select the service role needed."
       />
 
       <div className="form-grid">
         {/* Event Name */}
-        <FormField id="eventName" label="Event Name" required span="full" error={errors.eventName}>
+        <FormField id="eventName" label="Event Name" required span="full" error={errors?.eventName}>
           <input
             id="eventName"
-            className="form-input"
+            className="input"
             placeholder="e.g. Ritik & Priya's Wedding"
             value={data.eventName}
             onChange={(e) => set("eventName", e.target.value)}
@@ -76,14 +76,14 @@ export default function Step1Basics({ data, onChange, onNext }: Props) {
           options={EVENT_TYPES}
           value={data.eventType}
           onChange={(v) => set("eventType", v)}
-          error={errors.eventType}
+          error={errors?.eventType}
         />
 
         {/* Location */}
-        <FormField id="location" label="Location" required error={errors.location}>
+        <FormField id="location" label="Location" required error={errors?.location}>
           <input
             id="location"
-            className="form-input"
+            className="input"
             placeholder="e.g. Mumbai, Maharashtra"
             value={data.location}
             onChange={(e) => set("location", e.target.value)}
@@ -91,11 +91,11 @@ export default function Step1Basics({ data, onChange, onNext }: Props) {
         </FormField>
 
         {/* Start Date */}
-        <FormField id="startDate" label="Event Start Date" required error={errors.startDate}>
+        <FormField id="startDate" label="Event Start Date" required error={errors?.startDate}>
           <input
             id="startDate"
             type="date"
-            className="form-input"
+            className="input"
             value={data.startDate}
             onChange={(e) => set("startDate", e.target.value)}
           />
@@ -106,7 +106,7 @@ export default function Step1Basics({ data, onChange, onNext }: Props) {
           <input
             id="endDate"
             type="date"
-            className="form-input"
+            className="input"
             value={data.endDate}
             min={data.startDate}
             onChange={(e) => set("endDate", e.target.value)}
@@ -114,10 +114,10 @@ export default function Step1Basics({ data, onChange, onNext }: Props) {
         </FormField>
 
         {/* Venue */}
-        <FormField id="venue" label="Venue" hint="optional">
+        <FormField id="venue" label="Venue" hint="optional" span="full">
           <input
             id="venue"
-            className="form-input"
+            className="input"
             placeholder="e.g. The Leela Palace, Delhi"
             value={data.venue}
             onChange={(e) => set("venue", e.target.value)}
@@ -127,28 +127,39 @@ export default function Step1Basics({ data, onChange, onNext }: Props) {
         {/* Category selector */}
         <div className="form-group full">
           <label className="form-label">
-            I need a… <span className="required"> *</span>
+            Required Category <span className="required">*</span>
           </label>
           <div className="category-cards">
-            {CATEGORIES.map((cat) => (
-              <div
-                key={cat.value}
-                id={`category-${cat.value}`}
-                className={`category-card ${data.category === cat.value ? "selected" : ""}`}
-                onClick={() => set("category", cat.value)}
-                role="radio"
-                aria-checked={data.category === cat.value}
-                tabIndex={0}
-                onKeyDown={(e) => e.key === "Enter" && set("category", cat.value)}
-              >
-                <div className="category-card-icon">{cat.icon}</div>
-                <div className="category-card-title">{cat.title}</div>
-                <div className="category-card-desc">{cat.desc}</div>
-              </div>
-            ))}
+            {CATEGORIES.map((cat) => {
+              const isSelected = data.category === cat.value;
+              return (
+                <div
+                  key={cat.value}
+                  id={`category-${cat.value}`}
+                  className={`category-card ${isSelected ? "selected" : ""}`}
+                  onClick={() => set("category", cat.value)}
+                  role="radio"
+                  aria-checked={isSelected}
+                  tabIndex={0}
+                  onKeyDown={(e) => e.key === "Enter" && set("category", cat.value)}
+                >
+                  <div className="category-card-header">
+                    <span className="category-title">{cat.title}</span>
+                    <div className="category-check">
+                      {isSelected && (
+                        <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
+                          <path d="M1 4L3.5 6.5L9 1" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                        </svg>
+                      )}
+                    </div>
+                  </div>
+                  <span className="category-desc">{cat.desc}</span>
+                </div>
+              );
+            })}
           </div>
-          {errors.category && (
-            <span className="form-error" role="alert">⚠ {errors.category}</span>
+          {errors?.category && (
+            <span className="field-error" role="alert">{errors.category}</span>
           )}
         </div>
       </div>

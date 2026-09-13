@@ -45,9 +45,9 @@ export default function Step2PlannerFields({ data, onChange, onNext, onBack }: P
   return (
     <div>
       <CardHeader
-        stepLabel="Step 2 of 4 — Event Planner"
+        stepLabel="Step 2 of 3 — Event Planner"
         title="Planner Requirements"
-        subtitle="Tell us what services you need and your event scale."
+        subtitle="Specify services needed and overall event scale."
       />
 
       <div className="form-grid">
@@ -62,29 +62,29 @@ export default function Step2PlannerFields({ data, onChange, onNext, onBack }: P
           error={errors.servicesNeeded}
         />
 
-        {/* Budget Range — two side-by-side inputs with a shared section label */}
+        {/* Budget Range */}
         <div className="form-group full">
           <label className="form-label">Budget Range</label>
-          <div className="budget-row">
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
             <div className="form-group">
-              <label className="form-label hint-text" htmlFor="budgetMin">Min (₹)</label>
+              <label className="form-label" style={{ fontSize: "0.75rem" }} htmlFor="budgetMin">Min (₹)</label>
               <input
                 id="budgetMin"
                 type="number"
-                className="form-input"
-                placeholder="e.g. 50,000"
+                className="input"
+                placeholder="50,000"
                 min={0}
                 value={data.budgetMin || ""}
                 onChange={(e) => set("budgetMin", Number(e.target.value))}
               />
             </div>
             <div className="form-group">
-              <label className="form-label hint-text" htmlFor="budgetMax">Max (₹)</label>
+              <label className="form-label" style={{ fontSize: "0.75rem" }} htmlFor="budgetMax">Max (₹)</label>
               <input
                 id="budgetMax"
                 type="number"
-                className="form-input"
-                placeholder="e.g. 5,00,000"
+                className="input"
+                placeholder="5,00,000"
                 min={0}
                 value={data.budgetMax || ""}
                 onChange={(e) => set("budgetMax", Number(e.target.value))}
@@ -93,14 +93,13 @@ export default function Step2PlannerFields({ data, onChange, onNext, onBack }: P
           </div>
         </div>
 
-
         {/* Guest Count */}
         <FormField id="guestCount" label="Guest Count" required error={errors.guestCount}>
           <input
             id="guestCount"
             type="number"
-            className="form-input"
-            placeholder="e.g. 200"
+            className="input"
+            placeholder="200"
             min={1}
             value={data.guestCount || ""}
             onChange={(e) => set("guestCount", Number(e.target.value))}
@@ -123,8 +122,9 @@ export default function Step2PlannerFields({ data, onChange, onNext, onBack }: P
         <FormField id="specialRequirements" label="Special Requirements" span="full">
           <textarea
             id="specialRequirements"
-            className="form-textarea"
-            placeholder="Any specific preferences, themes, allergies, or instructions…"
+            className="textarea"
+            placeholder="Any specific preferences or instructions…"
+            rows={3}
             value={data.specialRequirements}
             onChange={(e) => set("specialRequirements", e.target.value)}
           />
@@ -134,7 +134,7 @@ export default function Step2PlannerFields({ data, onChange, onNext, onBack }: P
       <StepNav
         backId="planner-back"
         nextId="planner-next"
-        nextLabel="Review →"
+        nextLabel="Continue"
         onBack={onBack}
         onNext={() => { if (validate()) onNext(); }}
       />

@@ -73,7 +73,7 @@ export default function EventsPage() {
       if (res.success) {
         setEvents(res.data);
       } else {
-        setError("Failed to fetch events from MongoDB Atlas");
+        setError("Failed to fetch events from database");
       }
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Error connecting to backend");
@@ -94,12 +94,6 @@ export default function EventsPage() {
     return matchesCat && matchesSearch;
   });
 
-  const categoryIcons: Record<string, string> = {
-    planner: "📋 Planner",
-    performer: "🎤 Performer",
-    crew: "🎬 Crew",
-  };
-
   return (
     <main className="page-wrapper">
       <Navbar />
@@ -108,32 +102,48 @@ export default function EventsPage() {
         <div className="events-header">
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <div>
-              <h1 style={{ fontSize: "1.8rem", fontWeight: 800, color: "var(--text-1)" }}>
-                Live Event Requirements
+              <h1 style={{ fontSize: "1.6rem", fontWeight: 800 }}>
+                Live Requirements
               </h1>
-              <p style={{ color: "var(--text-2)", fontSize: "0.9rem" }}>
-                Stored real-time in MongoDB Atlas cluster (<code style={{ color: "var(--brand-light)" }}>bosuritik_db_user</code>)
+              <p style={{ color: "var(--text-2)", fontSize: "0.875rem", marginTop: "2px" }}>
+                Stored in real-time MongoDB database
               </p>
             </div>
             <div className="db-status-badge">
               <span className="db-pulse" />
-              {events.length} Events in DB
+              {events.length} Total Events
             </div>
           </div>
 
-          <div className="events-controls" style={{ marginTop: "12px" }}>
-            {/* Search input */}
-            <div style={{ flex: "1 1 240px" }}>
+          {/* Designed Search Bar and Controls */}
+          <div className="events-controls" style={{ marginTop: "8px" }}>
+            {/* Custom Designed Search Input */}
+            <div className="search-wrapper" style={{ flex: "1 1 280px" }}>
+              <svg className="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="11" cy="11" r="8" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+              </svg>
               <input
                 type="text"
-                className="input"
-                placeholder="🔍 Search event, location, venue..."
+                className="search-input"
+                placeholder="Search by event, location, venue..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
+              {search && (
+                <button
+                  style={{
+                    position: "absolute", right: "12px", background: "none",
+                    border: "none", color: "var(--text-3)", cursor: "pointer", fontSize: "0.8rem"
+                  }}
+                  onClick={() => setSearch("")}
+                >
+                  Clear
+                </button>
+              )}
             </div>
 
-            {/* Category Filter Chips */}
+            {/* Category Filter Pills */}
             <div style={{ display: "flex", gap: "6px" }}>
               {["all", "planner", "performer", "crew"].map((cat) => (
                 <button
@@ -156,14 +166,13 @@ export default function EventsPage() {
         {/* State displays */}
         {loading ? (
           <div className="card" style={{ textAlign: "center", padding: "40px 0" }}>
-            <div className="spinner" style={{ margin: "0 auto 12px", width: "24px", height: "24px" }} />
-            <p style={{ color: "var(--text-2)" }}>Loading events from MongoDB Atlas...</p>
+            <p style={{ color: "var(--text-2)", fontSize: "0.9rem" }}>Loading events...</p>
           </div>
         ) : error ? (
-          <div className="validation-banner">⚠️ {error}</div>
+          <div className="validation-banner">{error}</div>
         ) : filteredEvents.length === 0 ? (
           <div className="card" style={{ textAlign: "center", padding: "40px 0" }}>
-            <p style={{ color: "var(--text-2)", fontSize: "1rem" }}>No events found matching your filter.</p>
+            <p style={{ color: "var(--text-2)", fontSize: "0.9rem" }}>No events found matching your search filter.</p>
           </div>
         ) : (
           <div className="events-grid">
@@ -172,9 +181,9 @@ export default function EventsPage() {
                 <div className="event-card-header">
                   <div>
                     <h3 className="event-card-title">{item.eventName}</h3>
-                    <div style={{ display: "flex", gap: "6px", marginTop: "6px", flexWrap: "wrap" }}>
-                      <span className={`category-badge ${item.category}`}>
-                        {categoryIcons[item.category] || item.category}
+                    <div style={{ display: "flex", gap: "6px", marginTop: "8px", flexWrap: "wrap" }}>
+                      <span className="category-badge">
+                        {item.category}
                       </span>
                       <span className="event-card-type">{item.eventType}</span>
                     </div>
@@ -183,13 +192,13 @@ export default function EventsPage() {
 
                 <div className="event-details-list">
                   <div className="event-detail-row">
-                    <span>📍</span>
+                    <span style={{ color: "var(--text-3)", fontSize: "0.78rem" }}>LOCATION:</span>
                     <span>
                       {item.location} {item.venue ? `(${item.venue})` : ""}
                     </span>
                   </div>
                   <div className="event-detail-row">
-                    <span>📅</span>
+                    <span style={{ color: "var(--text-3)", fontSize: "0.78rem" }}>DATE:</span>
                     <span>{fmtDate(item.startDate)}</span>
                   </div>
 
@@ -235,7 +244,7 @@ export default function EventsPage() {
 
                 <div className="event-card-footer">
                   <span>ID: #{item._id.slice(-8).toUpperCase()}</span>
-                  <span style={{ color: "var(--green)" }}>● MongoDB Atlas</span>
+                  <span>MongoDB Atlas</span>
                 </div>
               </div>
             ))}
